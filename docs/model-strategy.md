@@ -575,7 +575,8 @@ SSD 留 50 GB 安全余量。
 - **解法优先级**：
   1. Modelfile 里 `PARAMETER think false`（最稳）
   2. API 请求**顶层** `"think": false` —— ⚠️ **不是** `options.think`，那是错的
-- **本项目已在 `config/astrbot.example.yaml` 修正为顶层 `think: false`**
+- **本项目已修正**：provider 配置里 `ollama_disable_thinking: true`（AstrBot 转成 `reasoning_effort=none` → Ollama 转成 `think=false`）
+- 实际配置文件是部署机上的 `D:\dev\AstrBot\data\cmd_config.json`（不在本仓库）
 
 ### 坑 2：Ollama 按显存自动选 `num_ctx`
 
@@ -666,8 +667,10 @@ B 方案（两个模型，各自独占 VRAM）
 ```bash
 # config/mem0.env.example
 LLM_MODEL=qwen3.5:9b-q4_K_M   # 提取器与主对话共享
+```
 
-# config/astrbot.example.yaml
+```yaml
+# D:\dev\AstrBot\data\cmd_config.json（实际生效的配置）
 summary_model: qwen3.5:9b-q4_K_M
 ```
 
@@ -679,15 +682,15 @@ summary_model: qwen3.5:9b-q4_K_M
 # A → B
 ollama pull qwen3.5:2b-q4_K_M
 # 改 mem0.env: LLM_MODEL=qwen3.5:2b-q4_K_M
-# 改 astrbot.yaml: summary_model: qwen3.5:2b-q4_K_M
+# 改 cmd_config.json: summary_model: qwen3.5:2b-q4_K_M
 
 # B → C（显存不够时降级）
 ollama pull qwen3.5:4b-q4_K_M
-# 改 astrbot.yaml: llm.model: qwen3.5:4b-q4_K_M
+# 改 cmd_config.json: provider[].model: qwen3.5:4b-q4_K_M
 
 # B → B'（纯文字模式换 Q8_0，质量更好；语音模式切回 B）
 ollama pull qwen3.5:9b-q8_0
-# 改 astrbot.yaml: llm.model: qwen3.5:9b-q8_0
+# 改 cmd_config.json: provider[].model: qwen3.5:9b-q8_0
 ```
 
 > ⚠️ 标签别写错：`qwen3.5:2b` 的默认标签是 **Q8_0**，要省显存必须显式写 `qwen3.5:2b-q4_K_M`（1.9 GB）。
@@ -753,9 +756,11 @@ Qwen3.5 EQ 去谄媚 DPO
 ### 6.8 部署微调模型
 
 ```yaml
-# config/astrbot.example.yaml
-llm:
-  model: my-companion   # ← 换成你创建的 Ollama 模型名
+# D:\dev\AstrBot\data\cmd_config.json（实际生效的配置）
+provider:
+  - id: ollama_local_9b
+    type: openai_chat_completion
+    model: my-companion   # ← 换成你创建的 Ollama 模型名
 ```
 
 ```bash

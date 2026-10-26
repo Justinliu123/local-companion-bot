@@ -11,6 +11,8 @@
 #       ├── proactive.py     # 主动关怀调度
 #       ├── topic.py         # 话题检测
 #       ├── memory_rank.py   # 记忆评分
+#       ├── avatar.py        # 形象层（桌宠 dsh-pet）HTTP 适配
 #       └── handler.py       # 主消息处理入口（组合上面四者）
 #
 # 完整设计说明见 docs/companion-features.md
+# 形象层设计见 docs/avatar-integration.md

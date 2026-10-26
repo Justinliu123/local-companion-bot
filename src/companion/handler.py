@@ -15,6 +15,7 @@ from .memory_rank import MemoryRanker
 from .proactive import ProactiveScheduler
 from .voice_bio import SpeakerIdentifier, VoiceEmotionDetector
 from .persona import PersonaManager, Persona
+from .avatar import AvatarClient, TIER_SPEAKING, WORK_STATUS_THINKING
 
 
 class CompanionHandler:
@@ -59,6 +60,9 @@ class CompanionHandler:
         if voice_cfg.get("voice_emotion", {}).get("enabled"):
             self.emotion_detector = VoiceEmotionDetector(voice_cfg["voice_emotion"])
 
+        # 形象层（可选，桌宠 dsh-pet）
+        self.avatar = AvatarClient(config.get("avatar", {}))
+
         # 按用户分组的短期历史
         self.history_by_user: dict[str, list[dict]] = {}
         self.turn_idx = 0
@@ -101,6 +105,9 @@ class CompanionHandler:
         emotion_state = self.emotion.transition(user_msg)
         style_hint = self.emotion.current_style_hint()
 
+        # ---- 4b. 形象层：跟随情绪切档位 ----
+        await self.avatar.set_emotion(emotion_state)
+
         # ---- 5. 话题检测 ----
         topic_info = self.topic.on_new_message(self.turn_idx, user_msg)
 
@@ -138,7 +145,11 @@ class CompanionHandler:
         )
 
         # ---- 9. LLM 生成 ----
+        await self.avatar.set_work_status(WORK_STATUS_THINKING)
         reply = await self.llm.generate(prompt)
+
+        # ---- 9b. 形象层：把回复投喂进气泡（桌宠不调模型，只显示）----
+        await self.avatar.say(reply, tier=TIER_SPEAKING)
 
         # ---- 10. 处理人格切换的问候（如果刚切换过）----
         if self._pending_persona_switch:

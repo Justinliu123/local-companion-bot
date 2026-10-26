@@ -18,6 +18,9 @@ data/voiceprints/
 config/*.env
 config/*.yaml
 config/*.yml
+# 例外：模板文件必须进版本库，部署机要靠它们拿到配置结构
+!config/*.example.yaml
+!config/*.example.yml
 
 # ===== 日志 =====
 logs/

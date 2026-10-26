@@ -14,7 +14,7 @@ class ProactiveConfig:
     daily_max_count: int = 1
     quiet_hours: list = field(default_factory=lambda: ["22:00", "08:00"])
     global_cooldown_hours: float = 12.0
-    silent_phrases: list = field(default_factory_factory=lambda: ["别烦我", "安静"])
+    silent_phrases: list = field(default_factory=lambda: ["别烦我", "安静"])
     silent_duration_hours: int = 24
     rules: list = field(default_factory=list)
 

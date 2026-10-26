@@ -269,7 +269,7 @@ L3 语音栈（全部加载时）：
 
 ---
 
-## 5. 配置示例（astrbot.yaml）
+## 5. 配置示例（AstrBot 主配置 `cmd_config.json`）
 
 ```yaml
 voice:

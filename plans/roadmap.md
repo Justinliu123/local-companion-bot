@@ -128,6 +128,36 @@
 
 ---
 
+## Phase 4.5：形象层（桌宠）
+
+> 独立的支线，**不阻塞**语音主链路。形象层失败必须完全无感。
+> **执行手册（自包含，含每步验收标准与失败处理）：[[avatar-integration.md]] §10**
+> 确认项登记与默认答案：[[avatar-integration.md]] §12
+
+### 路径 A：复用 dsh-pet（先行）
+
+- [ ] 目标机 `npm install -g dsh-pet`
+- [ ] `dsh-pet-standalone --check` 体检 → `dsh-pet-standalone` 起服务
+- [ ] `GET /health` 确认服务正常
+- [ ] 浏览器打开 `http://127.0.0.1:3080/dsh-pet-7340/` 看形态
+- [ ] **抄下它实际的动画池名字** → 填进 `config/avatar.example.yaml` 的 `tier_animations`
+- [ ] 在 `D:\dev\AstrBot\data\cmd_config.json` 里加 `avatar:` 段并开 `enabled: true`
+- [ ] `handler.py` 已接好三个点：情绪切档位 / 等首字切「思考」/ 回复投喂气泡
+- [ ] 冒烟测试：`python scripts/test-avatar.py`（已随仓库提供）
+- [ ] 验收：文字聊天时桌宠待机；说话时弹气泡；情绪切换有反应；**杀掉桌宠服务后对话完全正常**
+
+### 路径 B：原创形象（后续）
+
+- [ ] 按 `prompts/桌面宠物 10 秒动作提示词.md` 配方定动作清单
+- [ ] 绿幕视频 → 抠像 → VP9-alpha webm
+- [ ] 放进 `main-animation/webm/`（**优先级高于包内素材**），逐个替换 `tier_animations`
+- [ ] 或做成 pet pack：每人一个性格一只独立宠物
+
+> ⚠️ **自带动画池没有情绪向的动画** —— 倾听 / 关心 / 俏皮 / 认真 / 说话 / 主动搭话
+> 这六档只能靠路径 B 的自制素材。这是路径 B 的主要动因。
+
+---
+
 ## Phase 5：自动化（可选）
 
 - [ ] 注册 Windows 服务（开机自启 + 崩溃自愈）
@@ -170,6 +200,12 @@
 ---
 
 ## 变更记录
+
+- **2026-10-26**：新增 **Phase 4.5 形象层（桌宠）**支线。调研 [QCYTSN/dsh-dafeiyu](https://github.com/QCYTSN/dsh-dafeiyu)
+  → 上游 `PC2005-cloud/dsh-pet`，决定**路径 A 先行、路径 B 后续**（目前纯自用）。
+  产出 [[avatar-integration.md]] + `src/companion/avatar.py` 适配层（纯标准库，失败不影响主链路）
+  + `scripts/test-avatar.py` 冒烟测试 + `config/avatar.example.yaml`。
+  同时修掉 `src/companion/proactive.py` 的 `default_factory_factory` 笔误（该 bug 会让整个包 import 失败）。
 
 - **2026-10-25**：完成 TTS 引擎选型与实测对比。选定 **Qwen3-TTS 1.7B 为主引擎**（唯一可控情绪，显存省 1.4 GB），
   **VoxCPM2 官方版备选**（48 kHz、整句 RTF 更低）。放弃 llama.cpp-omni 移植版（中文退化）。

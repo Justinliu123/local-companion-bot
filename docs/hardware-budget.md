@@ -4,7 +4,8 @@
 >
 > 实测配置：i5-14600KF（14C/20T，无核显）/ 32 GB DDR5-6000（双通道）/ RTX 5060 Ti 16 GB（compute 12.0，驱动 610.88）/ C: 322 GB + D: 874 GB 空闲
 >
-> 配置版本：2026-10 换代（Qwen3.5-9B + Qwen3.5-2B + IndexTTS2）
+> 配置版本：2026-10 换代（Qwen3.5-9B + Qwen3.5-2B + **Qwen3-TTS 1.7B / VoxCPM2**）
+> 语音模式实测主模型用 **Qwen3.5-4B**（9B 留给纯文字），见 [[local-stack.md]]
 > 选型依据见 [[model-strategy.md]]。
 
 ## ⚠️ 先读这一条：实际可用显存是 ~12 GB，不是 16 GB
@@ -112,7 +113,7 @@
 | 4 | 主模型 → `qwen3.5:4b-q4_K_M` | -3.6 GB |
 | 5 | 提取器 → 让主对话自己提取 | -2.3 GB |
 | 6 | `OLLAMA_CONTEXT_LENGTH` → 4096 | -0.2 GB |
-| 7 | IndexTTS2 半精度 / 降采样步数 | -2 ~ 4 GB |
+| 7 | TTS 降 batch_size（4 → 2 → 1）/ 改用更轻的引擎 | -1 ~ 2 GB |
 
 > 优先级 1 是 2026-10-24 新增的（实测桌面常驻占 ~4 GB 显存）—— **零成本、收益最大**，先做这个再考虑动模型。
 > 优先级 2 取代了旧版的 CosyVoice2 / Spark-TTS：VoxCPM2 中文 CER 0.97% 更好，且 llama.cpp-omni 是单二进制、无 Python 依赖，部署最省事。
@@ -129,7 +130,7 @@
 | ChromaDB | ~150 MB |
 | AstrBot | ~80 MB |
 | ASR (sensevoice) | ~250 MB（仅加载时） |
-| TTS (IndexTTS2) | ~1 - 2 GB（仅加载时） |
+| TTS（VoxCPM2 / Qwen3-TTS，独立进程） | ~1 - 2 GB（仅加载时） |
 | **常驻合计** | **~530 MB** |
 | **全栈加载** | **~2.5 - 3.5 GB** |
 
@@ -142,7 +143,6 @@
 | `qwen3.5:9b-q4_K_M` | ~6.6 GB |
 | `qwen3.5:2b-q4_K_M` | **~1.9 GB** |
 | `qwen3.5:9b-q8_0`（纯文字模式可选） | ~10 GB |
-| IndexTTS2 | ~2 - 4 GB |
 | Qwen3-TTS 1.7B-VoiceDesign | ~4.3 GB + Tokenizer 651 MB |
 | VoxCPM2（官方 PyTorch 版） | ~4.7 GB（model.safetensors 4.3 + audiovae.pth 0.36） |
 | SenseVoice-Small | ~200 MB |

@@ -46,6 +46,9 @@ ollama --version
 | ≥ v0.17.5 | **必须** | 修 Qwen3.5 的 GPU/CPU 分割崩溃与重复循环 bug |
 | ≥ v0.31.2 | 推荐 | 多模态稳定性 |
 
+> **2026-10-24 复核**：上游最新版是 **v0.40.10**，旧版写的"≥v0.31.2"已过时，装最新的即可。
+> 本机实测 v0.40.10 自动选中 `cuda_v13` runtime，Blackwell（compute 12.0）正常。
+
 ### 1.3 配置 Ollama 环境变量
 
 ```powershell
@@ -518,15 +521,22 @@ curl http://127.0.0.1:8888/docs
 
 ```powershell
 cp config\mem0.env.example config\mem0.env
-cp config\astrbot.example.yaml config\astrbot.yaml
 ```
+
+> ⚠️ **AstrBot 主配置不在本仓库里** —— 实际生效的是部署机上的
+> `D:\dev\AstrBot\data\cmd_config.json`（provider / memory / persona / 组件开关）。
+> 本仓库的 `config/` 只保留**模板**，供换机器时对照；改配置请改上面那个文件。
+> 组件级配置（路径 / 端口 / 环境变量）在 `D:\dev\companion\config.json`。
+> 详见 [local-stack.md](local-stack.md)。
 
 ### 4.2 编辑配置
 
-用编辑器打开以下文件，按需修改：
-
-- `config/mem0.env`：填入实际路径、提取器模型名等
-- `config/astrbot.yaml`：选择 TTS 音色 `speaker_id`、调整人格 prompt
+| 文件 | 改什么 |
+|------|--------|
+| `D:\dev\AstrBot\data\cmd_config.json` | provider（TTS / ASR / LLM）、记忆、人格、组件开关 |
+| `D:\dev\companion\config.json` | 各组件路径 / 端口 / 环境变量 |
+| `config/mem0.env` | 填入实际路径、提取器模型名等 |
+| `config/avatar.example.yaml` | 形象层（桌宠）的档位表 —— 模板，实际值要写进 `cmd_config.json` |
 
 ### 4.3 加载到运行环境
 
@@ -684,7 +694,8 @@ Remove-Item -Recurse -Force E:\Documents\local-companion-bot
 ### 响应特别慢（30 秒以上）
 **最常见原因：`think` 没关。** 排查顺序：
 1. 确认请求里 `think` 在**顶层**（不是 `options.think`）
-2. 确认 `astrbot.yaml` 里 `llm.think: false`（顶层）
+2. 确认 provider 配置里 `ollama_disable_thinking: true`（见 [local-stack.md](local-stack.md)）
+   —— AstrBot 会把它转成 `reasoning_effort=none` → Ollama 转成 `think=false`
 3. 用 Modelfile 兜底：`PARAMETER think false`
 4. 确认 Ollama ≥ v0.17.5
 
@@ -696,10 +707,12 @@ Remove-Item -Recurse -Force E:\Documents\local-companion-bot
 - 确认 `repeat_penalty: 1.0`（Ollama 默认 1.1 会损害 Qwen3.5 质量）
 
 ### TTS / SenseVoice 模型加载失败
-- 确认模型已下载到 `models/` 目录
-- 路径在 `config/astrbot.yaml` 中正确
+- 确认模型已下载到 `D:\dev\models\`
+- 路径在 `D:\dev\AstrBot\data\cmd_config.json` 的 provider 段里正确
 - TTS 第一次加载很慢（30s+ 准备），耐心等
 - ⚠️ 别试图用 `ollama pull` 装 TTS —— Ollama 没有 TTS 库（v0.40.9 的原生 TTS 仅 Apple Silicon）
+- ⚠️ 本机 TTS 是**独立服务**（VoxCPM2:8010 / Qwen3-TTS:8008），不是 Ollama 模型
+  —— 服务没起时 provider 会静默返回空路径
 
 ### 显存 OOM
 - 依次降级：见 [hardware-budget.md](hardware-budget.md) 的降级策略

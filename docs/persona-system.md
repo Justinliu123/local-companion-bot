@@ -48,7 +48,7 @@
 
 ## 3. 配置示例
 
-`config/astrbot.yaml` 中的 `personas` section：
+AstrBot 主配置 `D:\dev\AstrBot\data\cmd_config.json` 里的 `personas` section：
 
 ```yaml
 personas:

@@ -232,7 +232,7 @@ class SentenceBoundaryDetector:
 
 如果用户继续说，**取消当前 LLM 输出，从新输入重启**。代价是一次无效推理。
 
-建议：默认 250ms 预测启动，可在 `astrbot.yaml` 调：
+建议：默认 250ms 预测启动，可在 AstrBot 主配置 `cmd_config.json` 调：
 
 ```yaml
 streaming:
@@ -327,7 +327,7 @@ async for token in llm_stream:
 ```
 
 > `emotion` 参数把情绪状态机的当前状态传给 TTS（IndexTTS2 的情感向量 / Qwen3-TTS 的自然语言描述 / VoxCPM2 的音色描述提示），
-> 让声音也跟着状态走 —— 这是陪伴感的重要一环。映射见 `astrbot.yaml` 的 `voice.tts.emotion_hints`。
+> 让声音也跟着状态走 —— 这是陪伴感的重要一环。映射见 AstrBot 主配置 `cmd_config.json` 的 `voice.tts.emotion_hints`。
 
 ---
 

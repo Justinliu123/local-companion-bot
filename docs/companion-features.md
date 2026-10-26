@@ -31,7 +31,7 @@
 | `serious` | 用户求助重大决策 | 给框架不答案 | 不站队 |
 | `tired` | 深夜/用户表达疲倦 | 轻声 | 不强聊 |
 
-### 1.3 配置示例（写入 `astrbot.yaml`）
+### 1.3 配置示例（写入 AstrBot 主配置 `cmd_config.json`）
 
 ```yaml
 emotion:

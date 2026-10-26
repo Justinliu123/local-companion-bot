@@ -88,10 +88,12 @@ VAD 同时监测：
 - 默认端口 8000
 - 提供 HTTP API
 
-### IndexTTS2（语音合成）
-- 情绪 / 音色**解耦**，8 维情感向量
-- 情感向量由情绪状态机（caring / playful / tired…）直接驱动
-- 显存 ~4-8 GB；降级备选：Qwen3-TTS 1.7B（延迟最优）/ CosyVoice2-0.5B / Spark-TTS
+### TTS（语音合成）
+- **两个独立服务**（不是 Ollama 模型）：VoxCPM2（:8010，主）/ Qwen3-TTS 1.7B（:8008，备）
+- `instruct` 同时控制音色与情绪 → 情绪状态机的 `emotion_hints` 可直接映射
+- 显存各 ~4-6 GB，**绝不能同时跑**（加上桌面常驻会超 16 GB）
+- 降级链：VoxCPM2 → Qwen3-TTS 1.7B → IndexTTS2（半精度，24G+ 才值得）→ CosyVoice2-0.5B → Spark-TTS
+- 实测细节（torch.compile 必须关、预热 44 秒、RTF 劣化要重启）见 [[local-stack.md]]
 
 ### SenseVoice-Small（语音识别）
 - FunASR 出品

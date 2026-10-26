@@ -40,7 +40,7 @@
 
 ## 陪伴能力模块
 
-为了让机器人像"伙伴"而非"工具"，除基础架构外还有 8 个核心模块：
+为了让机器人像"伙伴"而非"工具"，除基础架构外还有 9 个核心模块：
 
 | 模块 | 作用 | 文档 |
 |------|------|------|
@@ -52,6 +52,7 @@
 | 语音情感识别 | 从声调识别情绪，与文本情感融合 | [voice-biometrics §3](docs/voice-biometrics.md#3-语音情感识别voice-emotion-detection) |
 | 流式响应管线 | 边听边说、停顿即回应、可被中途打断 | [streaming-pipeline](docs/streaming-pipeline.md) |
 | 多人格系统 | 多种角色可切换，支持家人不同体验 | [persona-system](docs/persona-system.md) |
+| **形象层（桌宠）** | 给机器人一个透明置顶的身体，跟随情绪/状态做动画 | [avatar-integration](docs/avatar-integration.md) |
 
 参考实现位于 [`src/companion/`](src/companion/)，可按目标机器的依赖环境调整。
 
@@ -98,6 +99,7 @@
 ```
 local-companion-bot/
 ├── README.md                              ← 当前文件
+├── CLAUDE.md                              ← 部署机 agent 的自动入口（红线 / 当前状态 / 待确认项）
 ├── docs/                                  ← 设计文档
 │   ├── local-stack.md                     本机实际运行栈（组件位置/端口/启动顺序/验证脚本）
 │   ├── architecture.md                    详细架构与数据流
@@ -108,16 +110,19 @@ local-companion-bot/
 │   ├── streaming-pipeline.md              流式响应管线（边听边说）
 │   ├── persona-system.md                  多人格系统设计
 │   ├── model-strategy.md                  模型选型与微调策略
+│   ├── avatar-integration.md              形象层（桌宠）集成方案
 │   └── deployment.md                      目标机器部署指南
 ├── scripts/                               ← 启动 / 关闭 / 服务化脚本
 │   ├── start-companion.ps1                一键启动
 │   ├── stop-companion.ps1                 一键关闭并释放显存
 │   ├── install-windows-service.ps1        注册 Windows 服务（可选）
-│   └── uninstall-windows-service.ps1      卸载 Windows 服务
+│   ├── uninstall-windows-service.ps1      卸载 Windows 服务
+│   ├── patch-astrbot-qwen3tts.py          AstrBot TTS provider 补丁（可重放）
+│   └── test-avatar.py                     形象层适配器冒烟测试
 ├── config/                                ← 配置示例（不要提交真实密钥）
 │   ├── ollama.env.example                 Ollama 环境变量
 │   ├── mem0.env.example                   Mem0 后端配置
-│   └── astrbot.example.yaml               AstrBot 主配置（含多模块 + 多人格）
+│   └── avatar.example.yaml                形象层（桌宠）配置
 ├── plans/
 │   └── roadmap.md                         阶段路线图
 ├── src/companion/                         ← 陪伴能力参考实现
@@ -128,6 +133,7 @@ local-companion-bot/
 │   ├── voice_bio.py                       声纹识别 + 语音情感
 │   ├── persona.py                         多人格管理
 │   ├── streaming.py                       流式响应管线
+│   ├── avatar.py                          形象层（桌宠 dsh-pet）HTTP 适配
 │   └── handler.py                         主消息处理（组合上面所有）
 ├── data/                                  运行时数据（gitignored，含声纹）
 ├── models/                                模型权重（gitignored）

@@ -1,0 +1,50 @@
+# 形象层（桌宠）配置模板
+#
+# 对应实现：src/companion/avatar.py
+# 设计说明：docs/avatar-integration.md
+#
+# ⚠️ 本项目当前 AstrBot 的实际主配置在 `D:\dev\AstrBot\data\cmd_config.json`，
+#    这份模板只覆盖形象层这一段，便于单独维护 / 换机器时对照。
+
+avatar:
+  # 总开关。false 时适配层完全不发请求（也不报错）。
+  enabled: false
+
+  # dsh-pet standalone 默认 http://127.0.0.1:3080/dsh-pet-7340
+  # ⚠️ 端口不对就什么都看不到 —— 先跑 `dsh-pet-standalone --check` 确认
+  base_url: "http://127.0.0.1:3080/dsh-pet-7340"
+
+  # 桌宠实例 id。主宠物是 "main"；pet pack 加的宠物用各自的 id。
+  pet_id: "main"
+
+  # 单次请求超时（秒）。本机回环，正常 < 10ms。
+  timeout: 3.0
+
+  # 连续失败多少次后自动关闭形象层，避免对着没人监听的端口刷日志。
+  max_consecutive_failures: 5
+
+  # 右键菜单项的 owner 名（注册菜单项时用，同 owner 整体覆盖）。
+  menu_owner: "companion-bot"
+
+  # 档位 → 桌宠动画名。
+  # ⚠️ 动画名必须是 dsh-pet **实际带的动画池里的名字**，找不到就是 404。
+  #    装好 dsh-pet 后按它自带的清单核对一遍（docs/avatar-integration.md §3.1）。
+  #    键是档位索引，值是动画名；没列出的档位用 src/companion/avatar.py 里的默认值。
+  tier_animations:
+    0: "待机"        # idle      ← emotion.neutral
+    1: "待机"        # listening ← emotion.listening（自带池没有，待原创素材）
+    2: "待机"        # caring    ← emotion.caring
+    3: "待机"        # playful   ← emotion.playful
+    4: "待机"        # serious   ← emotion.serious
+    5: "打瞌睡"      # tired     ← emotion.tired
+    6: "待机"        # thinking  ← 等 LLM 首字（另走 /work-status 思考档）
+    7: "待机"        # speaking  ← TTS 播放中
+    8: "待机"        # proactive ← 主动关怀
+    9: "待机"        # error
+
+# ⚠️ 授权提醒（详见 docs/avatar-integration.md §8）
+#   - dsh-pet 代码 MIT；素材（动画/提示词/源视频）允许开源、禁止商用
+#   - 大肥鱼形象是 CC BY-NC-SA 4.0：署名 · 非商业 · 相同方式共享
+#   - 本项目目前纯自用 → 可用，但公开渠道二创须附：
+#     https://github.com/PC2005-cloud/dsh-pet
+#   - 一旦要商用 → 必须换成自制素材（路径 B）
