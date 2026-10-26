@@ -1,0 +1,66 @@
+# ===== 运行时数据，绝不提交 =====
+data/
+*.db
+*.sqlite
+*.sqlite3
+chroma/
+chroma_db/
+
+# ===== 声纹数据（生物特征，严格保密）=====
+data/voiceprints/
+*.npy
+# 说明：只存 embedding 哈希值，不存原音频；
+# 但即便如此，npy 文件也是敏感数据，禁止上传
+
+# ===== 配置（保留 .example） =====
+.env
+.env.local
+config/*.env
+config/*.yaml
+config/*.yml
+
+# ===== 日志 =====
+logs/
+*.log
+*.err.log
+*.out.log
+
+# ===== 模型权重（大文件） =====
+models/
+*.gguf
+*.bin
+*.safetensors
+*.pt
+*.pth
+
+# ===== Python =====
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+.python-version
+
+# ===== IDE / 编辑器 =====
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ===== 系统垃圾 =====
+*.tmp
+*.bak
+*.backup
+
+# ===== 凭据 / 临时测试输出 =====
+*.token
+*.key
+secrets/
+
+# ===== 参考实现（开发期可能需要调试） =====
+# 取消注释以忽略 src/companion/ 的运行产物
+# __pycache__/
+# *.pyc
+# 注：上面 Python 部分已忽略 __pycache__ 和 *.pyc

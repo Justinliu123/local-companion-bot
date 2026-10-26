@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "astrbot",
+      "runtimeExecutable": "D:/dev/astrbot-venv/Scripts/python.exe",
+      "runtimeArgs": ["-u", "main.py"],
+      "cwd": "D:/dev/AstrBot",
+      "port": 6185,
+      "url": "http://localhost:6185/voice-chat.html"
+    }
+  ]
+}
